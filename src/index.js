@@ -50,12 +50,15 @@ class Game extends React.Component {
             history: [{
                 squares: Array(9).fill(null)
             }],
+            stepNumber: 0,
             xIsNext: true
         };
     }
 
     handleClick(i) {
-        const history = this.state.history;
+        //заменим чтение - const history = this.state.history;
+        //на
+        const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
         //если calculateWinner(squares) не null
@@ -69,13 +72,31 @@ class Game extends React.Component {
             history: history.concat([{
                 squares: squares,
             }]),
+            //Когда мы делаем очередной ход,
+            //нам нужно обновить stepNumber
+            // используя stepNumber: history.length
+            //как часть аргумента для this.setState.
+            // Это гарантирует, что мы не застрянем,
+            // показывая одно и то же после того,
+            // как был сделан новый ход.
+            stepNumber: history.length,
             xIsNext: !this.state.xIsNext
+        });
+    }
+
+    jumpTo(step) {
+        this.setState({
+            stepNumber: step,
+            xIsNext: (step % 2) === 0
         });
     }
 
     render() {
         const history = this.state.history;
-        const current = history[history.length - 1];
+        //изменим метод render для Game,
+        //чтобы вместо рендера последнего хода
+        //он рендерил ход, соответствующий stepNumber
+        const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
         //step-Текущий обрабатываемый элемент массива
         //https://stackoverflow.com/questions/38364400/index-inside-map-function
@@ -86,7 +107,7 @@ class Game extends React.Component {
                 'Go to game start';
             return (
                 <li key={move}>
-                    <button onClick={() => this.jampTo(move)}>{desc}
+                    <button onClick={() => this.jumpTo(move)}>{desc}
                     </button>
                 </li>
             );
