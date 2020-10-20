@@ -77,6 +77,21 @@ class Game extends React.Component {
         const history = this.state.history;
         const current = history[history.length - 1];
         const winner = calculateWinner(current.squares);
+        //step-Текущий обрабатываемый элемент массива
+        //https://stackoverflow.com/questions/38364400/index-inside-map-function
+        //move-Индекс текущего обрабатываемого элемента в массиве
+        const moves = history.map((step, move) => {
+            const desc = move ?
+                'Go to move #' + move :
+                'Go to game start';
+            return (
+                <li>
+                    <button onClick={() => this.jampTo(move)}>{desc}
+                    </button>
+                </li>
+            );
+        });
+        //
         let status;
         if (winner) {
             status = 'Winner ' + winner;
@@ -93,10 +108,14 @@ class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
-                    <ol>{/* TODO */}</ol>
+                    <ol>{moves}</ol>
                 </div>
             </div>
-        );
+        );//<ol>{moves}</ol-для каждого хода в истории игры
+        //мы создаём элемент списка <li>,
+        //который содержит кнопку <button>.
+        //У кнопки есть обработчик onClick,
+        //который вызывает метод this.jumpTo()
     }
 }
 
